@@ -1,6 +1,6 @@
 # ECEN 5013 AESD - Final Project Repository
 
-**Repository owned by -  - Rushi James Macwan (GitHub ID: MacRush7)**
+**Repository owned by - Rushi James Macwan (GitHub ID: MacRush7)**
 
 This repository contains the final project submissions made by **Rushi James Macwan** for the ECEN 5013 AESD (Fall-19) class. Please, see the overview of this repository below for more details.
 
