@@ -6,6 +6,8 @@ This repository contains the final project submissions made by **Rushi James Mac
 
 Please, see the overview of this repository below for more details.
 
+**This repository contains the _Application Source Code_ for the final project.**
+
 # Repository Overview
 
 This repository, in general, hosts the application source code for the final project. The Buildroot build system codebase is hosted on a different repository. Please, kindly visit the below links for more details:
