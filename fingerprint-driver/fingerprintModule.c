@@ -1,14 +1,7 @@
 // reference AD-013%20Command%20Operation%20Guide_v1.2.pdf
 // reference Fingerprint_sensor_module_User_Manual_v1.0_2019-1-22.pdf
 
-#include <wiringPi.h>
-#include <stdio.h>
-
-#define LedPin    0		// TODO
-#define ButtonPin 1		// TODO
-
-#define BUF_SIZE		100
-#define NUM_IMAGES	6
+#include "fingerprintModule.h"
 
 int checkButton()
 {
@@ -44,7 +37,7 @@ void clearBuffer()
 	}
 }
 
-fingerprint()
+void fingerprint()
 {
 	// fingerprint buffer
 	uint32_t fingerprintBuffer[BUF_SIZE];
@@ -236,4 +229,5 @@ fingerprint()
 				break;
 			}
 		}
+	}
 }
