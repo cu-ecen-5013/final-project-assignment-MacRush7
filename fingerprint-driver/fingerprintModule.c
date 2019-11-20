@@ -19,30 +19,29 @@ int checkButton()
 	return buttonFlag;
 }
 
-int checksum(uint8_t cmd[], int length) 
+int checksum(uint32_t cmd[], uint32_t length) 
 {
 	int checksum = 0;
 	// check sum is last two bytes... reference 2
 	for (int i = 6; i < length-2; i++)
 		checksum += cmd[i];
-	return sum;
+	return checksum;
 }
 
 void clearBuffer()
 {
 	// clear buffer
-	for(i = 0; i < BUF_SIZE; i++)
+	for(int i = 0; i < BUF_SIZE; i++)
 	{
 		fingerprintBuffer[i] = 0;
 	}
 }
 
-void fingerprint()
+//int fingerprint()
+int main()
 {
 	// fingerprint buffer
-	uint32_t fingerprintBuffer[BUF_SIZE];
-	uint32_t length = 0;
-	int state = 0, button = 0, i = 0, minEnrolled = 1, max Enrolled = 1;
+	int state = 0, button = 0, i = 0, minEnrolled = 1, maxEnrolled = 1;
 	int start = 0xEF;
 
 	// wiring init failed
@@ -58,24 +57,6 @@ void fingerprint()
 	pullUpDnControl(ButtonPin, PUD_UP); 
 	digitalWrite(LedPin, HIGH);
 
-	// fingerprint commands... see reference
-	uint32_t GetImage[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x03, 0x01, 0x00, 0x05};
-	uint32_t GenChar[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x04, 0x02, 0x01, 0x00, 0x00};
-	uint32_t RegModel[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x03, 0x05, 0x00, 0x09};
-	uint32_t StoreChar[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x06, 0x06, 0x01, 0x00, 0x01, 0x00, 0x0F};
-	uint32_t Search[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x08, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-	uint32_t DeleteChar[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x07, 0x0C, 0x00, 0x05, 0x00, 0x0A, 0x00, 0x23};
-	uint32_t Empty[] = {0xEF, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x03, 0x0D, 0x00, 0x11};
-	
-	// cmd lengths
-	GetImgageLength = sizeof(GetImage)/sizeof(GetImage[0]);
-	GenCharLength = sizeof(GenCharLength)/sizeof(GenCharLength[0]);
-	RegModelLength = sizeof(RegModelLength)/sizeof(RegModelLength[0]);
-	StoreCharLength = sizeof(StoreCharLength)/sizeof(StoreCharLength);
-	SearchLength = sizeof(SearchLength)/sizeof(SearchLength[0]);
-	DeleteCharLength = sizeof(DeleteCharLength)/sizeof(DeleteCharLength);
-	EmptyLength = sizeof(EmptyLength)/sizeof(EmptyLength[0]);
-	
 	// device file
 	FILE* file;
 	file = fopen("/dev/fp1_control", "r+");
@@ -141,7 +122,7 @@ void fingerprint()
 					Search[SearchLength-3] = minEnrolled;
 					Search[SearchLength-2] = maxEnrolled;
 					Search[SearchLength-1] = checksum(Search, SearchLength);
-					fwrite(Search, SearchLength, 1 file);
+					fwrite(Search, SearchLength, 1, file);
 					
 					// write cmd to buffer for checking
 					for(i = 0; i < SearchLength; i++)
@@ -161,7 +142,7 @@ void fingerprint()
 			case 1:
 			{				
 				// repeat 6 times for adding fingerprint image
-				for(i = 0, i < NUM_IMAGES; i++)
+				for(i = 0; i < NUM_IMAGES; i++)
 				{
 					clearBuffer();
 
@@ -179,6 +160,8 @@ void fingerprint()
 						fingerprintBuffer[i] = getc(file);					
 					}
 					
+					clearBuffer();
+
 					// step 2: generate char
 					GenChar[10] = maxEnrolled+1;
 					GenChar[GenCharLength-1] = checksum(GenChar, GenCharLength);
@@ -230,4 +213,5 @@ void fingerprint()
 			}
 		}
 	}
+	return 0;
 }
