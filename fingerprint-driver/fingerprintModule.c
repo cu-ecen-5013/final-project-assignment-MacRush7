@@ -43,6 +43,7 @@ int main()
 	// fingerprint buffer
 	int state = 0, button = 0, i = 0, minEnrolled = 1, maxEnrolled = 1;
 	int start = 0xEF;
+	char name;
 
 	// wiring init failed
 	if(wiringPiSetup() == -1)
@@ -79,6 +80,9 @@ int main()
 					break;
 				}
 			
+				// TODO!! add a check for fingerprint removal request
+				
+				
 				clearBuffer();
 			
 				// write to device
@@ -98,6 +102,7 @@ int main()
 				// generate the fingerprint then search
 				if(fingerprintBuffer[9] == 0)
 				{
+					printf("User detected...\n");
 					clearBuffer();
 					
 					// generate characters to index 1
@@ -192,6 +197,10 @@ int main()
 					// copy remaining
 					fingerprintBuffer[i] = getc(file);					
 				}
+	
+				printf("Unique fingerprints temporarily stored\n"); 
+				printf("Enter user name\n");
+				scanf("%c", &name);
 				
 				// store fingerprint
 				StoreChar[StoreCharLength-3] = maxEnrolled;
@@ -208,8 +217,18 @@ int main()
 					fingerprintBuffer[i] = getc(file);					
 				}
 				
+				printf("Unique fingerprints added\n");
+				
 				state = 0;
 				break;
+			}
+						
+			// remove fingerprint
+			case 2:
+			{
+				printf("Type user name to delete data\n");
+				scanf("%c", &name);
+				// TODO!! check file for name and fingerprint number then remove
 			}
 		}
 	}
