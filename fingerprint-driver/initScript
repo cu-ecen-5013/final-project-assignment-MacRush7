@@ -39,11 +39,11 @@ fingerprint_unload()
 
 case "$1" in
 	start)
-		echo "loading fingerprint"
+		echo "Fingerprint sensor connected"
 		fingerprint_load
 		;;
 	stop)
-		echo "unloading fingerprint"
+		echo "Fingerprint sensor disconnected"
 		fingerprint_unload
 		;;
 esac
