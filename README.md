@@ -1,7 +1,10 @@
 # ECEN 5013 AESD - Final Project Repository
 
 **TO USE THE RPI:**
-cd WiringPi
+
+if cloning this repo: need to do git clone --recursive
+
+then... cd WiringPi
 
 ./build
 
