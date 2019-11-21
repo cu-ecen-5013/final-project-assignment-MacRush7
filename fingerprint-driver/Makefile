@@ -5,7 +5,7 @@ else
 	CC= gcc -Wall -Werror
 endif
 
-INCLUDE_DIR= -I/usr/local/include -L/usr/local/lib -lwiringPi
+INCLUDE_DIR= -pthread -lwiringPi -lm -lrt -lcrypt
 CFLAGS= -g $(INCLUDE_DIRS)
 LIBS= 
 OBJS= fingerprintModule.o
@@ -16,8 +16,9 @@ fingerprintModule: $(OBJS)
 	$(CC) -o fingerprintModule $(OBJS) $(INCLUDE_DIR)
 
 fingerprintModule.o: fingerprintModule.c
-	$(CC) -c fingerprintModule.c $(INCLUDE_DIR)
+	$(CC) -c fingerprintModule.c $(INCLUDE_DIR) 
 
 clean:
 	-rm -f *.o *.d
 	-rm -f fingerprintModule
+

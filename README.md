@@ -1,5 +1,10 @@
 # ECEN 5013 AESD - Final Project Repository
 
+**TO USE THE RPI:**
+cd WiringPi
+
+./build
+
 **Repository owned by - Rushi James Macwan (GitHub ID: MacRush7)**
 
 This repository contains the final project submissions made by **Rushi James Macwan** for the ECEN 5013 AESD (Fall-19) class. The project is developed in a team with contributions from **Sarah Stephany**.
