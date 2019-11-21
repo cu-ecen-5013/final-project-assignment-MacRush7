@@ -10,11 +10,15 @@ int checkButton()
 	if(digitalRead(ButtonPin) == 0)
 	{ 
 		//indicate that button has pressed down
+		printf("button pressed\n");
 		buttonFlag = 1;
-		digitalWrite(LedPin, LOW);   //led on
+		digitalWrite(LedPin, HIGH);   //led on
 	}
 	else
+	{
+		printf("button not pressed\n");
 		buttonFlag = 0;
+	}
 	
 	return buttonFlag;
 }
@@ -40,6 +44,8 @@ void clearBuffer()
 //int fingerprint()
 int main()
 {
+	printf("start\n");
+
 	// fingerprint buffer
 	int state = 0, button = 0, i = 0, minEnrolled = 1, maxEnrolled = 1;
 	int start = 0xEF;
@@ -48,7 +54,7 @@ int main()
 	// wiring init failed
 	if(wiringPiSetup() == -1)
 	{
-		printf("wiringPi.h failed!");
+		printf("wiringPi.h failed!\n");
 		return 1; 
 	}
 	
@@ -56,13 +62,19 @@ int main()
 	pinMode(LedPin, OUTPUT); 
 	pinMode(ButtonPin, INPUT);
 	pullUpDnControl(ButtonPin, PUD_UP); 
-	digitalWrite(LedPin, HIGH);
+	digitalWrite(LedPin, LOW);
+
+	// check button
+	button = checkButton();
 
 	// device file
 	FILE* file;
-	file = fopen("/dev/fp1_control", "r+");
-	if(!file)
+	file = fopen("/dev/fp_control", "r+");
+	if(file == NULL)
+	{
+		printf("file didn't open\n");
 		return -1;
+	}
 	
 	while(1) // may want to change to stop the fingerprint module TODO
 	{
@@ -232,5 +244,7 @@ int main()
 			}
 		}
 	}
+	fclose(file);
+	
 	return 0;
 }
