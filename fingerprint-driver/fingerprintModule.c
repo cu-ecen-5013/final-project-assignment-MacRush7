@@ -72,7 +72,7 @@ int main()
 	file = fopen("/dev/fp_control", "r+");
 	if(file == NULL)
 	{
-		printf("file didn't open\n");
+		printf("file didn't open\n");			// failing TODO
 		return -1;
 	}
 	
@@ -210,7 +210,7 @@ int main()
 					fingerprintBuffer[i] = getc(file);					
 				}
 	
-				printf("Unique fingerprints temporarily stored\n"); 
+				printf("Unique fingerprints temporarily stored\n"); 		// do we want to do this? TODO
 				printf("Enter user name\n");
 				scanf("%c", &name);
 				
@@ -235,7 +235,7 @@ int main()
 				break;
 			}
 						
-			// remove fingerprint
+			// remove fingerprint			will need to add another button for this TODO
 			case 2:
 			{
 				printf("Type user name to delete data\n");
