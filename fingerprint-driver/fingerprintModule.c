@@ -69,7 +69,7 @@ int main()
 
 	// device file
 	FILE* file;
-	file = fopen("/dev/fp_control", "r+");
+	file = fopen("/dev/fp_control", O_RDWR | O_CREAT);
 	if(file == NULL)
 	{
 		printf("file didn't open\n");			// failing TODO
