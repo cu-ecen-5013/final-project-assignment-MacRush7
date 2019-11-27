@@ -62,11 +62,19 @@ int main()
 	button = checkButton();
 
 	// device file
+<<<<<<< HEAD
 	int file;
 	file = open("/dev/fingerprint", "a+");
 	if(file == -1)
 	{
 		syslog(LOG_ERROR, "file didn't open");
+=======
+	FILE* file;
+	file = fopen("/dev/fp_control", O_RDWR | O_CREAT);
+	if(file == NULL)
+	{
+		printf("file didn't open\n");			// failing TODO
+>>>>>>> c80ab9fa69fe285b326e94c1c170c25c91262ed7
 		return -1;
 	}
 	
@@ -192,7 +200,11 @@ int main()
 						read(file, fingerprintBuffer[i], sizeof(char));
 				}
 	
+<<<<<<< HEAD
 				syslog(LOG_INFO, "Unique fingerprints temporarily stored"); 
+=======
+				printf("Unique fingerprints temporarily stored\n"); 		// do we want to do this? TODO
+>>>>>>> c80ab9fa69fe285b326e94c1c170c25c91262ed7
 				printf("Enter user name\n");
 				scanf("%c", &name);
 				
@@ -215,7 +227,7 @@ int main()
 				break;
 			}
 						
-			// remove fingerprint
+			// remove fingerprint			will need to add another button for this TODO
 			case 2:
 			{
 				syslog(LOG_INFO, "Type user name to delete data");
