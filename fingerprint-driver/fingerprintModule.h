@@ -1,9 +1,11 @@
-#include <wiringPi.h>
+#include <syslog.h>
+#include <iolib.c>
 #include <stdio.h>
 #include <stdint.h>
 
-#define LedPin    	0	
-#define ButtonPin 	1	
+#define LedPin    	14	
+#define ButtonPin 	16	
+#define header		9
 
 #define BUF_SIZE	100
 #define NUM_IMAGES	6
@@ -31,4 +33,3 @@ uint32_t SearchLength = sizeof(Search)/sizeof(Search[0]);
 int checkButton();
 int checksum(uint32_t cmd[], uint32_t length);
 void clearBuffer();
-//int fingerprint();

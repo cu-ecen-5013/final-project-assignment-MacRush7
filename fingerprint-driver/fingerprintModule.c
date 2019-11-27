@@ -7,16 +7,16 @@ int checkButton()
 {
 	int buttonFlag = 0;
 	
-	if(digitalRead(ButtonPin) == 0)
+	if(is_high(header, ButtonPin))
 	{ 
 		//indicate that button has pressed down
-		printf("button pressed\n");
+		syslog(LOG_INFO, "button pressed");
 		buttonFlag = 1;
-		digitalWrite(LedPin, HIGH);   //led on
+		pin_high(header, LedPin);   //led on
 	}
 	else
 	{
-		printf("button not pressed\n");
+		syslog(LOG_INFO, "button not pressed");
 		buttonFlag = 0;
 	}
 	
@@ -41,38 +41,32 @@ void clearBuffer()
 	}
 }
 
-//int fingerprint()
 int main()
 {
-	printf("start\n");
+	syslog(LOG_INFO, "start");
 
 	// fingerprint buffer
 	int state = 0, button = 0, i = 0, minEnrolled = 1, maxEnrolled = 1;
 	int start = 0xEF;
 	char name;
-
-	// wiring init failed
-	if(wiringPiSetup() == -1)
-	{
-		printf("wiringPi.h failed!\n");
-		return 1; 
-	}
 	
+	// initialize io library
+	iolib_init();
+
 	// set pins
-	pinMode(LedPin, OUTPUT); 
-	pinMode(ButtonPin, INPUT);
-	pullUpDnControl(ButtonPin, PUD_UP); 
-	digitalWrite(LedPin, LOW);
+	iolib_setdir(header, LedPin, DIR_OUT); 
+	iolib_setdir(header, ButtonPin, DIR_IN);
+	pin_low(header, LedPin);
 
 	// check button
 	button = checkButton();
 
 	// device file
-	FILE* file;
-	file = fopen("/dev/fp_control", "r+");
-	if(file == NULL)
+	int file;
+	file = open("/dev/fingerprint", "a+");
+	if(file == -1)
 	{
-		printf("file didn't open\n");
+		syslog(LOG_ERROR, "file didn't open");
 		return -1;
 	}
 	
@@ -85,7 +79,7 @@ int main()
 			{
 				// check button for state
 				button = checkButton();
-				if(button == 1)
+				if(is_high(header, ButtonPin))
 				{
 					// add fingerprint
 					state = 1;
@@ -98,39 +92,35 @@ int main()
 				clearBuffer();
 			
 				// write to device
-				fwrite(GetImage, GetImgageLength, 1, file);
+				write(file, GetImage, GetImgageLength);
 				
 				// write cmd to buffer for checking
 				for(i = 0; i < GetImgageLength; i++)
 				{
 					// wait for the start of the cmd
 					if((i == 0) && (fingerprintBuffer[i] != start))
-						fingerprintBuffer[i] = getc(file);
-					// copy remaining
-					fingerprintBuffer[i] = getc(file);					
+						read(file, fingerprintBuffer[i], sizeof(char));
 				}
 				
 				// 10th position will be 0 if success (finger sensed)
 				// generate the fingerprint then search
 				if(fingerprintBuffer[9] == 0)
 				{
-					printf("User detected...\n");
+					syslog(LOG_INFO, "User detected...");
 					clearBuffer();
 					
 					// generate characters to index 1
 					GenChar[10] = minEnrolled;
 					// generate check sum for last two bytes
 					GenChar[GenCharLength-1] = checksum(GenChar, GenCharLength);
-					fwrite(GenChar, GenCharLength, 1, file);
+					write(file, GenChar, GenCharLength);
 					
 					// write cmd to buffer for checking
 					for(i = 0; i < GenCharLength; i++)
 					{
 						// wait for the start of the cmd
 						if((i == 0) && (fingerprintBuffer[i] != start))
-							fingerprintBuffer[i] = getc(file);
-						// copy remaining
-						fingerprintBuffer[i] = getc(file);					
+							read(file, fingerprintBuffer[i], sizeof(char));
 					}
 					
 					clearBuffer();
@@ -139,16 +129,14 @@ int main()
 					Search[SearchLength-3] = minEnrolled;
 					Search[SearchLength-2] = maxEnrolled;
 					Search[SearchLength-1] = checksum(Search, SearchLength);
-					fwrite(Search, SearchLength, 1, file);
+					write(file, Search, SearchLength);
 					
 					// write cmd to buffer for checking
 					for(i = 0; i < SearchLength; i++)
 					{
 						// wait for the start of the cmd
 						if((i == 0) && (fingerprintBuffer[i] != start))
-							fingerprintBuffer[i] = getc(file);
-						// copy remaining
-						fingerprintBuffer[i] = getc(file);					
+							read(file, fingerprintBuffer[i], sizeof(char));	
 					}
 				}
 				else
@@ -165,16 +153,14 @@ int main()
 
 					// step 1: get image
 					// write to device
-					fwrite(GetImage, GetImgageLength, 1, file);
+					write(file, GetImage, GetImgageLength);
 					
 					// write cmd to buffer for checking
 					for(i = 0; i < GetImgageLength; i++)
 					{
 						// wait for the start of the cmd
 						if((i == 0) && (fingerprintBuffer[i] != start))
-							fingerprintBuffer[i] = getc(file);
-						// copy remaining
-						fingerprintBuffer[i] = getc(file);					
+							read(file, fingerprintBuffer[i], sizeof(char));
 					}
 					
 					clearBuffer();
@@ -182,54 +168,48 @@ int main()
 					// step 2: generate char
 					GenChar[10] = maxEnrolled+1;
 					GenChar[GenCharLength-1] = checksum(GenChar, GenCharLength);
-					fwrite(GenChar, GenCharLength, 1, file);
+					write(file, GenChar, GenCharLength);
 					
 					// write cmd to buffer for checking
 					for(i = 0; i < GenCharLength; i++)
 					{
 						// wait for the start of the cmd
 						if((i == 0) && (fingerprintBuffer[i] != start))
-							fingerprintBuffer[i] = getc(file);
-						// copy remaining
-						fingerprintBuffer[i] = getc(file);					
+							read(file, fingerprintBuffer[i], sizeof(char));
 					}
 				}
 				
 				// register fingerprint
 				clearBuffer();
 				
-				fwrite(RegModel, RegModelLength, 1, file);
+				write(file, RegModel, RegModelLength);
 				
 				// write cmd to buffer for checking
 				for(i = 0; i < RegModelLength; i++)
 				{
 					// wait for the start of the cmd
 					if((i == 0) && (fingerprintBuffer[i] != start))
-						fingerprintBuffer[i] = getc(file);
-					// copy remaining
-					fingerprintBuffer[i] = getc(file);					
+						read(file, fingerprintBuffer[i], sizeof(char));
 				}
 	
-				printf("Unique fingerprints temporarily stored\n"); 
+				syslog(LOG_INFO, "Unique fingerprints temporarily stored"); 
 				printf("Enter user name\n");
 				scanf("%c", &name);
 				
 				// store fingerprint
 				StoreChar[StoreCharLength-3] = maxEnrolled;
 				StoreChar[StoreCharLength-1] = checksum(StoreChar, StoreCharLength);
-				fwrite(StoreChar, StoreCharLength, 1, file);
+				write(file, StoreChar, StoreCharLength);
 				
 				// write cmd to buffer for checking
 				for(i = 0; i < StoreCharLength; i++)
 				{
 					// wait for the start of the cmd
 					if((i == 0) && (fingerprintBuffer[i] != start))
-						fingerprintBuffer[i] = getc(file);
-					// copy remaining
-					fingerprintBuffer[i] = getc(file);					
+						read(file, fingerprintBuffer[i], sizeof(char));
 				}
 				
-				printf("Unique fingerprints added\n");
+				syslog(LOG_INFO, "Unique fingerprints added");
 				
 				state = 0;
 				break;
@@ -238,13 +218,14 @@ int main()
 			// remove fingerprint
 			case 2:
 			{
-				printf("Type user name to delete data\n");
+				syslog(LOG_INFO, "Type user name to delete data");
 				scanf("%c", &name);
 				// TODO!! check file for name and fingerprint number then remove
 			}
 		}
 	}
-	fclose(file);
-	
+	close(file);
+	iolib_free();
+
 	return 0;
 }
