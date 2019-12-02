@@ -44,7 +44,7 @@ void clearBuffer()
 	}
 }
 
-int minEnrolled, maxEnrolled;
+int minEnrolled, maxEnrolled, totalPrints;
 
 int main()
 {
@@ -52,7 +52,7 @@ int main()
 	int state = 0, i = 0, image = 0; //, button = 0;
 	char name;
 	
-	minEnrolled = 0;
+	minEnrolled = 0, totalPrints = 0;
 	
 	int file = serialOpen ("/dev/ttyS0", 57600);
 	if(file == -1)
@@ -125,6 +125,7 @@ int main()
 				if(fingerprintBuffer[9] != 0)
 				{
 					printf("no finger sensed\n");
+					state = 0;
 					break;
 				}
 				else			
@@ -168,9 +169,8 @@ int main()
 				clearBuffer();
 					
 				// last four bytes in search are min numEnrolled, max numEnrolled, 2 bytes for check sum
-				Search[SearchLength-5] = minEnrolled;
 				Search[SearchLength-3] = maxEnrolled;
-//				Search[SearchLength-1] = checksum(Search, SearchLength);
+				Search[SearchLength-1] = checksum(Search, SearchLength);
 				for(i = 0; i < SearchLength; i++)
 				{
 					serialPutchar(file, Search[i]);
@@ -188,10 +188,17 @@ int main()
 					printf("search resp: %x\n", fingerprintBuffer[i]);
 				}
 							
+				if(fingerprintBuffer[9] != 0)
+				{
+					printf("fingerprint search failed\n");
+					state = 0;
+					break;
+				}
+				
 				printf("fingerprint score: %d\n", fingerprintBuffer[13]);
 				
 				// check fingerprint score, if > 50 (80% match)
-				if(fingerprintBuffer[13] >= 50)
+				if(fingerprintBuffer[13] >= 0x50)
 				{
 					printf("----------------------\n");
 					printf("fingerprint passed\n");
@@ -223,11 +230,14 @@ int main()
 					// wait for the start of the cmd
 					if((i == 0) && (fingerprintBuffer[i] != start))
 						fingerprintBuffer[i] = serialGetchar(file);								
+									
+					printf("getimg resp: %x\n", fingerprintBuffer[i]);
 				}
 				
 				if(fingerprintBuffer[9] != 0)
 				{
 					printf("no finger sensed\n");
+					state = 0;
 					break;
 				}
 				
@@ -302,12 +312,19 @@ int main()
 					printf("reg resp: %x\n", fingerprintBuffer[i]);				
 				}
 				
+				if(fingerprintBuffer[11] == 0xa)
+					printf("Unique fingerprints temporarily stored\n"); 		// do we want to do this? TODO
+				else
+					printf("Adding fingerprint failed\n");
+					
 				printf("Unique fingerprints temporarily stored\n"); 		// do we want to do this? TODO
 //				printf("Enter user name\n");
 //				scanf("%c", &name);
 				
+				totalPrints += 1;
+								
 				// store fingerprint
-				StoreChar[StoreCharLength-3] = maxEnrolled;
+				StoreChar[StoreCharLength-3] = totalPrints;
 				StoreChar[StoreCharLength-1] = checksum(StoreChar, StoreCharLength);
 
 				printf("storechar checksum: %x\n", StoreChar[StoreCharLength-1]);
