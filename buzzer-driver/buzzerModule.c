@@ -1,35 +1,43 @@
-void buzzer()
+void buzzer(int passedFile)
 {
 	char *noAlarm = "N";
-
-	// set GPIO header 9, pin 12 to output
-	iolib_setdir(header, BuzzerPin, DIR_OUT);
+	int i = 0;
 	
-	// turn on buzzer for three seconds and turn off for 1 second
-	for(int i = 0; i < 5; i++)
+	// set GPIO header 9, pin 12 to output = pin 60 (32*1 + 28)
+	int file = open("/sys/class/gpio/gpio60/value", O_WRONLY);
+	if(file == -1)
 	{
-		pin_high(header, BuzzerPin);
-		sleep(3);
-		pin_low(header, BuzzerPin);
-		sleep(1);
+		printf("buzzer file didnt open\n");
+		syslog(LOG_INFO, "buzzer file didn't open");
 	}
-
+	else
+		printf("buzzer file opened\n");	
+	
+	// turn on buzzer for three seconds and turn off for 1 second... repeat
+	for(i = 0; i < 3; i++)
+	{
+		write(file, "1", 1);
+		usleep(3000000);
+		write(file, "0", 1);
+		usleep(1000000);
+	}
+	
 	// reset file
-	int ret = write(buzzerFile, noAlarm, sizeof(char));
+	int ret = write(passedFile, noAlarm, strlen(noAlarm));
 	if(ret == -1)
 		syslog(LOG_ERROR, "file was not reset to no");
+	
+	close(file);
 }
 
 int main()
 {
-	char *buffer;
+	char *buffer = "0";
 	char *yesAlarm = "Y";
-
-	// initialize io library
-	iolib_init();
-
+	int ret = 3, i = 0, buzzerFile;
+	
 	// setup file
-	if((int buzzerFile = open("/dev/buzzerAlarm", "w+")) == -1)
+	if((buzzerFile = open("/dev/buzzerAlarm", O_RDWR | O_CREAT, 0666)) == -1)
 	{
 		syslog(LOG_ERROR, "file was not found or opened");
 		return -1;
@@ -38,16 +46,15 @@ int main()
 	while(1)
 	{
 		// check file for alarm
-		int ret = read(buzzerFile, &buffer[0], sizeof(char));
+		int ret = read(buzzerFile, buffer, strlen(yesAlarm));
 		if(ret == 0)
 			syslog(LOG_ERROR, "nothing in file to read");
 
 		ret = strcmp(buffer, yesAlarm);
 		// file contains "Y"
 		if(ret == 0)
-			buzzer();
+			buzzer(buzzerFile);
 	}	
 
 	close(buzzerFile);
-	iolib_free();
 }
