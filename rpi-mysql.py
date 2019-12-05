@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# Please Note: This is a MySQL test script that can be run on the RPI node running Raspbian. It is not intended for
+# integration purposes but demonstrates the functionalities that will be implemented in the final project integration. Thanks.
 #
 # Online Sources:
 #
