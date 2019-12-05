@@ -52,32 +52,32 @@ cur = db.cursor()
 
 # Creating the database table
 
-cur.execute("CREATE TABLE mytable-1 (Serial-seq INT UNSIGNED NOT NULL AUTO_INCREMENT, User-name string, User-id unsigned long int, PRIMARY KEY (Serial-seq))")
+cur.execute("CREATE TABLE mytable (Serialseq INT UNSIGNED NOT NULL AUTO_INCREMENT, Userno INT, Userid INT, PRIMARY KEY (Serialseq))")
 
 print("MySQL TEST TABLE CREATED...\n")
 
 # Adding timestamps for the time when the database was modified
 
-cur.execute("ALTER TABLE `mytable-1` ADD `TIME_OF_MODIFICATION` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
+cur.execute("ALTER TABLE `mytable` ADD `TIME_OF_MODIFICATION` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")
 
 # User test values
 
-user_name = "user-1"
-user_id = 100
-
-cur.execute("INSERT INTO mytable-1 (User-name, User-id) VALUES (%s, %s)", (user_name, user_id))
+for x in range(1, 5):	
+	user_no = 1
+	user_id = 153
+	cur.execute("INSERT INTO mytable (Userno, Userid) VALUES (%s, %s)", (user_no, user_id))
 
 print("MySQL TEST TABLE UPDATED...\n")
 
 # Reading the last 5 table entries
 
-cur.execute("SELECT * FROM mytable-1 WHERE Serial-seq <= '5'")
+cur.execute("SELECT * FROM mytable WHERE Serialseq <= '5'")
 
 for row in cur.fetchall() :
-    print "Serial-seq\t\t", row[0], "\n", "User-name:\t\t", row[1], "C", "\n", "User-id:\t\t", row[2], "%", "\n", "TIME_OF_MODIFICATION`:\t\t", row[3], "\n\n\n\n"
+    print "Serialseq\t\t", row[0], "\n", "Userno:\t\t", row[1], "\n", "Userid:\t\t", row[2], "\n", "TIME_OF_MODIFICATION`:\t\t", row[3], "\n\n\n\n"
     
 # Dropping table after the test ends
     
-cur.execute("DROP TABLE mytable-1")
+cur.execute("DROP TABLE mytable")
 
 print("MySQL TEST TABLE DELETED...\n")
