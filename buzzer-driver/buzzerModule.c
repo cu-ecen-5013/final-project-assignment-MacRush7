@@ -1,5 +1,7 @@
 void buzzer(int passedFile)
 {
+	syslog(LOG_INFO, "Buzzer alerts detected");
+	
 	char *noAlarm = "N";
 	int i = 0;
 	
