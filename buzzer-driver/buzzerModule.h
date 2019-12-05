@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
 
-int buzzerFile;
-
-void buzzer();
+void buzzer(int passedFile);
