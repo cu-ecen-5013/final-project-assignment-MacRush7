@@ -1,6 +1,17 @@
 #!/bin/sh
 # original code github.com/cu-ecen-5013/ldd3/blob/master/
 
+config_pins()
+{
+	cd /sys/class/gpio
+	echo 50 > export
+	cd gpio50
+	echo out > direction
+	
+	config-pin P9_24 uart
+	config-pin P9_26 uart
+}
+
 fingerprint_load()
 {
 	module=fingerprintModule

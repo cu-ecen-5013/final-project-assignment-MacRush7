@@ -317,7 +317,7 @@ int main()
 				else
 					printf("Adding fingerprint failed\n");
 					
-				printf("Unique fingerprints temporarily stored\n"); 		// do we want to do this? TODO
+//				printf("Unique fingerprints temporarily stored\n"); 		// do we want to do this? TODO
 //				printf("Enter user name\n");
 //				scanf("%c", &name);
 				
