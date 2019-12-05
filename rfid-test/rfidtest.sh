@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sudo python3 Write.py
-sudo python3 Read.py
+sudo python3 Write.py && echo "Unique RFID card added...\n"
 
-echo "RFID sensor working correctly"
+sudo python3 Read.py && echo "User detected...\n"
 
+echo "RFID TEST SUCCESSFUL"
