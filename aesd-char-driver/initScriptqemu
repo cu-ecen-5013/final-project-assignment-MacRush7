@@ -1,0 +1,51 @@
+#!/bin/sh
+# original code github.com/cu-ecen-5013/ldd3/blob/master/
+
+aesdchar_load()
+{
+	module=aesdchar
+	device=aesdchar
+	mode="666"
+
+	cd `dirname $0`
+	set -e
+	# Group: since distributions do it differently, look for wheel or use staff
+	if grep -q '^staff:' /etc/group; then
+	    group="staff"
+	else
+	    group="wheel"
+	fi
+
+	modprobe $module.ko || exit 1
+	major=$(awk "\$2==\"$module\" {print \$1}" /proc/devices)
+	rm -f /dev/${device}
+	mknod /dev/${device} c $major 0
+	chgrp $group /dev/${device}
+	chmod $mode  /dev/${device}
+}
+
+aesdchar_unload()
+{
+	module=aesdchar
+	device=aesdchar
+	cd `dirname $0`
+
+	# invoke rmmod with all arguments we got
+	rmmod $module || exit 1
+
+	# Remove stale nodes
+	rm -f /dev/${device}
+}
+
+case "$1" in
+	start)
+		echo "loading aesdchar"
+		aesdchar_load
+		;;
+	stop)
+		echo "unloading aesdchar"
+		aesdchar_unload
+		;;
+esac
+
+exit 0
