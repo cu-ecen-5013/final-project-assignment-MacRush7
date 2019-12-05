@@ -71,7 +71,7 @@ print("MySQL TEST TABLE UPDATED...\n")
 
 # Reading the last 5 table entries
 
-cur.execute("SELECT * FROM eid WHERE Readings <= '5'")
+cur.execute("SELECT * FROM mytable-1 WHERE Serial-seq <= '5'")
 
 for row in cur.fetchall() :
     print "Serial-seq\t\t", row[0], "\n", "User-name:\t\t", row[1], "C", "\n", "User-id:\t\t", row[2], "%", "\n", "TIME_OF_MODIFICATION`:\t\t", row[3], "\n\n\n\n"
