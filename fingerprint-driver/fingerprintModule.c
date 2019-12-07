@@ -14,17 +14,19 @@ void checkGPIO(int file)
 
 int checksum(uint32_t cmd[], uint32_t length) 
 {
-	int checksum = 0;
+	int checksum = 0, i = 0;
 	// check sum is last two bytes... reference 2
-	for (int i = 6; i < length-2; i++)
+	for (i = 6; i < length-2; i++)
 		checksum += cmd[i];
 	return checksum;
 }
 
 void clearBuffer()
 {
+	int i = 0;
+	
 	// clear buffer
-	for(int i = 0; i < BUF_SIZE; i++)
+	for(i = 0; i < BUF_SIZE; i++)
 	{
 		fingerprintBuffer[i] = 0;
 	}
@@ -45,7 +47,7 @@ int main()
 	// initialize and check gpio LED pin (GPIO1_18 = 1*32 + 18 = 50)
 	ledFile = open("/sys/class/gpio/gpio50/value", O_WRONLY);
 	if(ledFile == -1)
-		syslog(LOG_INFO, "UART file didn't open");
+		syslog(LOG_INFO, "GPIO file didn't open");
 	
 	checkGPIO(ledFile);
 	
@@ -106,7 +108,7 @@ int main()
 				syslog(LOG_INFO, "get image wrote %d bytes", ret);
 				
 				for(i = 0; i < GetImageLength; i++)
-					printf("get image: %d\n", GetImage[i]);
+					printf("get image: %x\n", GetImage[i]);
 				
 				read(file, (void *)fingerprintBuffer, GetImageLength);
 				
@@ -167,7 +169,11 @@ int main()
 				if(fingerprintBuffer[11] == 0xa)
 					printf("Unique fingerprints temporarily stored\n");
 				else
-					printf("Adding fingerprint failed\n");
+				{
+					printf("Adding fingerprint failed\n\n");
+					state = 0;
+					break;
+				}
 				
 				// store fingerprint
 				StoreChar[StoreCharLength-3] = totalPrints;
@@ -210,7 +216,7 @@ int main()
 					printf("User detected...\n");
 				
 				clearBuffer();
-				tcflush(file, TCIFLUSH)
+				tcflush(file, TCIFLUSH);
 						
 				// generate characters to index 1
 				GenChar[10] = minEnrolled;
@@ -233,7 +239,7 @@ int main()
 				// get response
 				read(file, (void *)fingerprintBuffer, 16);
 				
-				if(fingerpirintBuffer[13] >= 0x50)
+				if(fingerprintBuffer[13] >= 0x50)
 					printf("fingerprint passed\n");
 				else
 					printf("fingerprint failed\n");
