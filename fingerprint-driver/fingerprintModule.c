@@ -6,11 +6,10 @@
 
 void checkGPIO(int file)
 {
-	printf("checking if LED is flashing\n");
 	write(file, "1", 1);
-	usleep(100000);
+	sleep(1);
 	write(file, "0", 1);
-	usleep(100000);
+	sleep(1);
 }
 
 int checksum(uint32_t cmd[], uint32_t length) 
@@ -38,26 +37,20 @@ int main()
 	syslog(LOG_INFO, "start");
 
 	// fingerprint buffer
-	int state = 0, i = 0, image = 0;
+	int state = 0, i = 0, image = 0, ret, ledFile, file;
 	char name;
 
 	minEnrolled = 0, totalPrints = 0;
 
 	// initialize and check gpio LED pin (GPIO1_18 = 1*32 + 18 = 50)
-	int ledFile = open("/sys/class/gpio/gpio50/value", O_WRONLY);
+	ledFile = open("/sys/class/gpio/gpio50/value", O_WRONLY);
 	if(ledFile == -1)
-	{
-		printf("LED file didnt open\n");
 		syslog(LOG_INFO, "UART file didn't open");
-	}
-	else
-		printf("LED file opened\n");
 	
 	checkGPIO(ledFile);
 	
 	// device file
-	int file;
-	file = open("/dev/ttyO0", O_RDWR | O_NOCTTY | O_NDELAY);
+	file = open("/dev/ttyO1", O_RDWR | O_NOCTTY | O_NDELAY);
 	if(file == -1)
 	{
 		printf("UART file didnt open\n");
@@ -105,27 +98,17 @@ int main()
 				printf("place finger on scanner\n");
 				sleep(3);
 
-				printf("before flush\n");
-
 				tcflush(file, TCIFLUSH);
 				clearBuffer();
-				printf("after clear buffer\n");
 				
 				// get fingerprint image
-				printf("before first write\n");
-				
-				write(file, &GetImage, GetImageLength);
+				ret = write(file, &GetImage, GetImageLength);
+				syslog(LOG_INFO, "get image wrote %d bytes", ret);
 				
 				for(i = 0; i < GetImageLength; i++)
 					printf("get image: %d\n", GetImage[i]);
 				
-				read(file, (void *)fingerprintBuffer, sizeof(char));
-				while(fingerprintBuffer != start)
-				{
-					clearBuffer();
-					read(file, (void *)fingerprintBuffer, sizeof(char));
-				}
-				read(file, (void *)fingerprintBuffer, 11);
+				read(file, (void *)fingerprintBuffer, GetImageLength);
 				
 				// 10th position will be 0 if finger sensed
 				if(fingerprintBuffer[9] != 0)
@@ -141,23 +124,16 @@ int main()
 				for(image = 0; image < NUM_IMAGES; image++)
 				{
 					clearBuffer();
+					tcflush(file, TCIFLUSH);
 
 					// step 1: get image
-					write(file, &GetImage, GetImageLength);
-					
+					ret = write(file, &GetImage, GetImageLength);
+					syslog(LOG_INFO, "get image wrote %d bytes", ret);
+
 					if(image == 0)
 					{
 						// get response
-						read(file, (void *)fingerprintBuffer, sizeof(char));
-						while(fingerprintBuffer != start)
-						{
-							clearBuffer();
-							read(file, (void *)fingerprintBuffer, sizeof(char));
-						}
-						read(file, (void *)fingerprintBuffer, 11);
-						
-						printf("getImg resp: %x\n", fingerprintBuffer[i]);																		
-
+						read(file, (void *)fingerprintBuffer, GetImageLength);				
 						clearBuffer();
 					}
 				
@@ -166,33 +142,26 @@ int main()
 					// step 2: generate char
 					GenChar[10] = maxEnrolled;
 					GenChar[GenCharLength-1] = checksum(GenChar, GenCharLength);
-					write(file, &GenChar, GenCharLength);
+					ret = write(file, &GenChar, GenCharLength);
+					syslog(LOG_INFO, "genchar wrote %d bytes", ret);					
 					
 					if(image == 0)
 					{
 						// get response
-						read(file, (void *)fingerprintBuffer, sizeof(char));
-						while(fingerprintBuffer != start)
-						{
-							clearBuffer();
-							read(file, (void *)fingerprintBuffer, sizeof(char));
-						}
-						read(file, (void *)fingerprintBuffer, GenCharLength);
+						read(file, (void *)fingerprintBuffer, 12);
 					}
 
-					printf("character #%d of %d generated\n", image, NUM_IMAGES); 
+					syslog(LOG_INFO, "character #%d of %d generated", image, NUM_IMAGES); 
 				}
 				
 				// register fingerprint
 				clearBuffer();
-				
-				write(file, &RegModel, RegModelLength);
+				tcflush(file, TCIFLUSH);
+
+				ret = write(file, &RegModel, RegModelLength);
+				syslog(LOG_INFO, "reg wrote %d bytes", ret);
 				
 				// get response
-				read(file, (void *)fingerprintBuffer, sizeof(char));
-				while(fingerprintBuffer != start)
-					read(file, (void *)fingerprintBuffer, sizeof(char));
-
 				read(file, (void *)fingerprintBuffer, RegModelLength);	
 				
 				if(fingerprintBuffer[11] == 0xa)
@@ -203,22 +172,17 @@ int main()
 				// store fingerprint
 				StoreChar[StoreCharLength-3] = totalPrints;
 				StoreChar[StoreCharLength-1] = checksum(StoreChar, StoreCharLength);
-				write(file, &StoreChar, StoreCharLength);
+				ret = write(file, &StoreChar, StoreCharLength);
+				syslog(LOG_INFO, "store char wrote %d bytes", ret);
 				
 				// get response
-				read(file, (void *)fingerprintBuffer, sizeof(char));
-				while(fingerprintBuffer != start)
-					read(file, (void *)fingerprintBuffer, sizeof(char));
-
-				read(file, (void *)fingerprintBuffer, StoreCharLength);	
+				read(file, (void *)fingerprintBuffer, 12);	
 				
 				printf("Unique fingerprints added\n");
-				syslog(LOG_INFO, "Unique fingerprints added");
 				
 				state = 0;
 				break;
 			}
-		/*			
 			// search for match
 			case 2:
 			{
@@ -229,65 +193,70 @@ int main()
 				clearBuffer();
 			
 				// write to device
-				write(file, &GetImage, GetImageLength);
+				ret = write(file, &GetImage, GetImageLength);
+				syslog(LOG_INFO, "get image wrote %d bytes", ret);
 				
-				// write cmd to buffer for checking
-				for(i = 0; i < GetImageLength; i++)
-				{
-					// wait for the start of the cmd
-					if((i == 0) && (fingerprintBuffer[i] != start))
-						read(file, &fingerprintBuffer[i], sizeof(char));
-				}
+				// get response
+				read(file, (void *)fingerprintBuffer, GetImageLength);
 				
 				// 10th position will be 0 if success (finger sensed)
-				// generate the fingerprint then search
-				if(fingerprintBuffer[9] == 0)
+				if(fingerprintBuffer[9] != 0)
 				{
-					syslog(LOG_INFO, "User detected...");
-					clearBuffer();
-					
-					// generate characters to index 1
-					GenChar[10] = minEnrolled;
-					// generate check sum for last two bytes
-					GenChar[GenCharLength-1] = checksum(GenChar, GenCharLength);
-					write(file, GenChar, GenCharLength);
-					
-					// write cmd to buffer for checking
-					for(i = 0; i < GenCharLength; i++)
-					{
-						// wait for the start of the cmd
-						if((i == 0) && (fingerprintBuffer[i] != start))
-							read(file, &fingerprintBuffer[i], sizeof(char));
-					}
-					
-					clearBuffer();
-					
-					// last four bytes in search are min numEnrolled, max numEnrolled, 2 bytes for check sum
-					Search[SearchLength-3] = minEnrolled;
-					Search[SearchLength-2] = maxEnrolled;
-					Search[SearchLength-1] = checksum(Search, SearchLength);
-					write(file, &Search, SearchLength);
-					
-					// write cmd to buffer for checking
-//					for(i = 0; i < SearchLength; i++)
-//					{
-						// wait for the start of the cmd
-//						if((i == 0) && (fingerprintBuffer[i] != start))
-							read(file, (void *)fingerprintBuffer, SearchLength); //sizeof(char));	
-//					}
+					printf("no finger sensed\n");
+					state = 0;
+					break;
 				}
 				else
-					break;
+					printf("User detected...\n");
+				
+				clearBuffer();
+				tcflush(file, TCIFLUSH)
+						
+				// generate characters to index 1
+				GenChar[10] = minEnrolled;
+				// generate check sum for last two bytes
+				GenChar[GenCharLength-1] = checksum(GenChar, GenCharLength);
+				ret = write(file, GenChar, GenCharLength);
+				syslog(LOG_INFO, "genchar wrote %d bytes", ret);
+					
+				// get response
+				read(file, (void *)fingerprintBuffer, 12);
+					
+				clearBuffer();
+					
+				// last four bytes in search are min numEnrolled, max numEnrolled, 2 bytes for check sum
+				Search[SearchLength-3] = maxEnrolled;
+				Search[SearchLength-1] = checksum(Search, SearchLength);
+				ret = write(file, &Search, SearchLength);
+				syslog(LOG_INFO, "search wrote %d bytes", ret);
+					
+				// get response
+				read(file, (void *)fingerprintBuffer, 16);
+				
+				if(fingerpirintBuffer[13] >= 0x50)
+					printf("fingerprint passed\n");
+				else
+					printf("fingerprint failed\n");
+				
+				state = 0;
+				break;
 			}
 			
-			// remove fingerprint
+			// remove all fingerprint
 			case 3:
 			{
-				syslog(LOG_INFO, "Type user name to delete data");
-				scanf("%c", &name);
-				// TODO!! check file for name and fingerprint number then remove
+				ret = write(file, &Empty, EmptyLength);
+				syslog(LOG_INFO, "empty wrote %d bytes", ret);
+				
+				// get response
+				read(file, (void *)fingerprintBuffer, EmptyLength);
+				
+				printf("removed all fingerprints from the database\n");
+				
+				state = 0;
+				break;
 			}
-		*/}
+		}
 	}
 	close(file);
 	close(ledFile);
