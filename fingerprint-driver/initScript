@@ -51,6 +51,7 @@ fingerprint_unload()
 case "$1" in
 	start)
 		echo "Fingerprint sensor connected"
+		config_pins
 		fingerprint_load
 		;;
 	stop)
