@@ -13,7 +13,7 @@ void buzzer(int passedFile)
 	{
 		lseek(gpioFile, 0, SEEK_SET);
 		write(gpioFile, "1", 1);
-		usleep(3000000);
+		usleep(2000000);
 		lseek(gpioFile, 0, SEEK_SET);
 		write(gpioFile, "0", 1);
 		usleep(1000000);
