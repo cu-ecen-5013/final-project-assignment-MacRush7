@@ -114,7 +114,7 @@ int main()
 					serialPutchar(file, GetImage[i]);
 
 				// write cmd to buffer for checking
-				for(i = 0; i < 11; i++)
+				for(i = 0; i < GetImageLength; i++)
 				{
 					fingerprintBuffer[i] = serialGetchar(file);
 					// wait for the start of the cmd
@@ -158,7 +158,7 @@ int main()
 					serialPutchar(file, GenChar[i]);
 								
 				// write cmd to buffer for checking
-				for(i = 0; i < GenCharLength; i++)
+				for(i = 0; i < 12; i++)
 				{
 					fingerprintBuffer[i] = serialGetchar(file);
 					// wait for the start of the cmd
@@ -178,7 +178,7 @@ int main()
 				}
 				
 				// write cmd to buffer for checking
-				for(i = 0; i < SearchLength-1; i++)
+				for(i = 0; i < 16; i++)
 				{
 					fingerprintBuffer[i] = serialGetchar(file);
 					// wait for the start of the cmd
@@ -224,7 +224,7 @@ int main()
 					serialPutchar(file, GetImage[i]);
 
 				// write cmd to buffer for checking
-				for(i = 0; i < 11; i++)
+				for(i = 0; i < GetImageLength; i++)
 				{
 					fingerprintBuffer[i] = serialGetchar(file);
 					// wait for the start of the cmd
@@ -283,7 +283,7 @@ int main()
 					if(image == 0)
 					{
 						// write cmd to buffer for checking
-						for(i = 0; i < GenCharLength; i++)
+						for(i = 0; i < 12; i++)
 						{
 							fingerprintBuffer[i] = serialGetchar(file);
 							// wait for the start of the cmd
@@ -333,7 +333,7 @@ int main()
 					serialPutchar(file, StoreChar[i]);
 				
 				// write cmd to buffer for checking
-				for(i = 0; i < StoreCharLength-3; i++)
+				for(i = 0; i < 12; i++)
 				{
 					fingerprintBuffer[i] = serialGetchar(file);
 					// wait for the start of the cmd
