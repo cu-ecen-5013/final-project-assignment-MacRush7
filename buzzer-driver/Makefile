@@ -13,11 +13,11 @@ EXTRA_CFLAGS += $(DEBFLAGS)
 
 ifneq ($(KERNELRELEASE),)
 # call from kernel build system
-obj-m	:= buzzerModule.o
+obj-m:= buzzerModule.o
 else
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
-PWD       := $(shell pwd)
+PWD:= $(shell pwd)
 
 modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
