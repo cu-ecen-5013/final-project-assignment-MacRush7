@@ -1,5 +1,4 @@
 # kernel makefile
-
 ifeq($(CC),)
 	CC = $(CROSS_COMPILE)gcc
 endif
