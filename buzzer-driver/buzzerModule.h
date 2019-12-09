@@ -10,7 +10,6 @@
 
 #define buzzerPin	2
 
-pthread_t ThreadIdx[3];
-pthread_mutex_t alarmLock;
+int alarmLock;
 
 void buzzer(int passedFile);

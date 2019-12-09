@@ -1,12 +1,12 @@
 // reference AD-013%20Command%20Operation%20Guide_v1.2.pdf
 // reference Fingerprint_sensor_module_User_Manual_v1.0_2019-1-22.pdf
 
+#include "fingerprintModule.h"
+
 #define BUF_SIZE	100
 #define NUM_IMAGES	6
 
-pthread_mutex_t alarmLock;
-
-#include "fingerprintModule.h"
+extern alarmLock;
 
 int checksum(uint32_t cmd[], uint32_t length) 
 {
@@ -346,10 +346,15 @@ int main()
 						
 					if(alarm == 2)
 					{
-						pthread_mutex_lock(&alarmLock);
-						lseek(alarmFile, 0, SEEK_SET);
-						write(alarmFile, "1", 1);
-						pthread_mutex_unlock(&alarmLock);
+						if(alarmLock == 0)
+						{
+							alarmLock = 1;
+//							pthread_mutex_lock(&alarmLock);
+							lseek(alarmFile, 0, SEEK_SET);
+							write(alarmFile, "1", 1);
+//							pthread_mutex_unlock(&alarmLock);
+							alarmLock = 0;
+						}
 					}
 						
 					state = 0;

@@ -16,11 +16,15 @@ void buzzer(int passedFile)
 	}
 	
 	// reset file
-	pthread_mutex_lock(&alarmLock);
-	lseek(passedFile, 0, SEEK_SET);
-	int ret = write(passedFile, noAlarm, 1);
-	pthread_mutex_lock(&alarmLock);
-	
+	if(alarmLock == 0)
+	{
+		alarmLock = 1;
+//		pthread_mutex_lock(&alarmLock);
+		lseek(passedFile, 0, SEEK_SET);
+		int ret = write(passedFile, noAlarm, 1);
+//		pthread_mutex_lock(&alarmLock);
+		alarmLock = 0;
+	}
 	if(ret == -1)
 		syslog(LOG_ERR, "file was not reset to 0");
 }
@@ -30,12 +34,6 @@ int main()
 	char buffer[1];
 	char *fileStarter = "0";
 	int ret = 3, buzzerFile;
-
-	if(pthread_mutex_init(&alaramLock, NULL) != 0)
-	{
-		syslog(LOG_ERR, "mutex init failed");
-		return -1;
-	}
 
 	if(wiringPiSetup() == -1)
 	{
@@ -60,10 +58,15 @@ int main()
 	while(1)
 	{
 		// check file for alarm
-		pthread_mutex_lock(&alarmLock);
-		lseek(buzzerFile, 0, SEEK_SET);
-		ret = read(buzzerFile, buffer, 1);
-		pthread_mutex_unlock(&alarmLock);
+		if(alarmLock == 0)
+		{
+			alarmLock = 1;
+//			pthread_mutex_unlock(&alarmLock);
+			lseek(buzzerFile, 0, SEEK_SET);
+			ret = read(buzzerFile, buffer, 1);
+//			pthread_mutex_unlock(&alarmLock);
+			alarmLock = 0;
+		}
 		
 		if(ret == 0)
 			syslog(LOG_ERR, "nothing in buzzer file to read");
