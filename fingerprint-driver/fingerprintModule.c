@@ -27,7 +27,7 @@ int minEnrolled, maxEnrolled, totalPrints;
 int main()
 {
 	// fingerprint buffer
-	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint, SPIfile;
+	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint, SPIfile, int alarmLock = 0;
 	char userBuffer[3000], delName[30], testing[1], SPIdataBuffer[300];;
 	
 	minEnrolled = 0, totalPrints = 0;

@@ -13,7 +13,8 @@
 
 #define BUF_SIZE	100
 #define NUM_IMAGES	6
-extern alarmLock;
+
+extern int alarmLock;
 
 struct fingerprintData
 {
