@@ -11,6 +11,10 @@
 #include <string.h>
 #include <wiringPiSPI.h>
 
+#define BUF_SIZE	100
+#define NUM_IMAGES	6
+extern alarmLock;
+
 struct fingerprintData
 {
 	int printID;

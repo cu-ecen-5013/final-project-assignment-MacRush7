@@ -3,11 +3,6 @@
 
 #include "fingerprintModule.h"
 
-#define BUF_SIZE	100
-#define NUM_IMAGES	6
-
-extern alarmLock;
-
 int checksum(uint32_t cmd[], uint32_t length) 
 {
 	int checksum = 0;

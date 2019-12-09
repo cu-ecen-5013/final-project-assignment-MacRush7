@@ -3,7 +3,7 @@
 void buzzer(int passedFile)
 {
 	char *noAlarm = "0";
-	int i = 0;
+	int i = 0, ret = 0;
 	char buffer[1];
 
 	// turn on buzzer for three seconds and turn off for 1 second... repeat
@@ -21,7 +21,7 @@ void buzzer(int passedFile)
 		alarmLock = 1;
 //		pthread_mutex_lock(&alarmLock);
 		lseek(passedFile, 0, SEEK_SET);
-		int ret = write(passedFile, noAlarm, 1);
+		ret = write(passedFile, noAlarm, 1);
 //		pthread_mutex_lock(&alarmLock);
 		alarmLock = 0;
 	}
