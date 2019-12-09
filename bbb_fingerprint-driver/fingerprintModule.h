@@ -1,17 +1,13 @@
 #include <syslog.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <wiringPi.h>
-#include <wiringSerial.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <termios.h>
 
-#define LedPin    	0	
-#define ButtonPin 	1
-
-#define BUF_SIZE	100
+#define BUF_SIZE	30
 #define NUM_IMAGES	6
 
 uint32_t fingerprintBuffer[BUF_SIZE];
@@ -35,6 +31,6 @@ uint32_t SearchLength = sizeof(Search)/sizeof(Search[0]);
 //uint32_t DeleteCharLength = sizeof(DeleteChar)/sizeof(DeleteChar[0]);
 uint32_t EmptyLength = sizeof(Empty)/sizeof(Empty[0]);
 
-int checkButton();
+void checkGPIO(int file);
 int checksum(uint32_t cmd[], uint32_t length);
 void clearBuffer();

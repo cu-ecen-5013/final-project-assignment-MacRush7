@@ -5,11 +5,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <wiringPi.h>
-#include <pthread.h>
-
-#define buzzerPin		2
-
-pthread_mutex_t alarmLock;
+#include <string.h>
 
 void buzzer(int passedFile);

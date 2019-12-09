@@ -1,29 +1,24 @@
-# See example Makefile from scull project
-# Comment/uncomment the following line to disable/enable debugging
-#DEBUG = y
-
-# Add your debugging flag (or not) to CFLAGS
-ifeq ($(DEBUG),y)
-	DEBFLAGS = -O -g -DSCULL_DEBUG # "-O" is needed to expand inlines
+# normal simple makefile
+ifdef CROSS_COMPILE
+	CC= arm-unknown-linux-gnueabi-gcc
 else
-	DEBFLAGS = -O2
+	CC= gcc -Wall -Werror
 endif
 
-EXTRA_CFLAGS += $(DEBFLAGS)
+INCLUDE_DIR= -pthread -lwiringPi -lm -lrt -lcrypt
+CFLAGS= -g $(INCLUDE_DIRS)
+LIBS= 
+OBJS= fingerprintModule.o
 
-ifneq ($(KERNELRELEASE),)
-# call from kernel build system
-obj-m:= fingerprintModule.o
-else
+all= fingerprintModule
 
-KERNELDIR ?= /lib/modules/$(shell uname -r)/build
-PWD:= $(shell pwd)
+fingerprintModule: $(OBJS)
+	$(CC) -o fingerprintModule $(OBJS) $(INCLUDE_DIR)
 
-modules:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
-
-endif
+fingerprintModule.o: fingerprintModule.c
+	$(CC) -c fingerprintModule.c $(INCLUDE_DIR) 
 
 clean:
-	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions
+	-rm -f *.o *.d
+	-rm -f fingerprintModule
 
