@@ -11,9 +11,9 @@ nrf_load()
 	set -e
 	# Group: since distributions do it differently, look for wheel or use staff
 	if grep -q '^staff:' /etc/group; then
-	    group="staff"
+		group="staff"
 	else
-	    group="wheel"
+		group="wheel"
 	fi
 
 	insmod ./$module.ko || exit 1
@@ -40,11 +40,11 @@ nrf_unload()
 case "$1" in
 	start)
 		echo "nrf connected"
-    		nrf_load
+		nrf_load
 		;;
 	stop)
 		echo "nrf disconnected"
-	 	nrf_unload
+		nrf_unload
 		;;
 esac
 
