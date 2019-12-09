@@ -4,12 +4,12 @@
 config_pins()
 {
 	cd /sys/class/gpio
-	echo 50 > export
+	sudo echo 50 > export
 	cd gpio50
-	echo out > direction
-	
-	config-pin P9_24 uart
-	config-pin P9_26 uart
+	sudo echo out > direction
+
+	config-pin P9.24 uart
+	config-pin P9.26 uart
 }
 
 fingerprint_load()
@@ -50,12 +50,12 @@ fingerprint_unload()
 
 case "$1" in
 	start)
-		echo "Fingerprint sensor connected"
+		echo "Fingerprint connected"
 		config_pins
 		fingerprint_load
 		;;
 	stop)
-		echo "Fingerprint sensor disconnected"
+		echo "Fingerprint disconnected"
 		fingerprint_unload
 		;;
 esac

@@ -1,21 +1,10 @@
 #!/bin/sh
 # original code github.com/cu-ecen-5013/ldd3/blob/master/
 
-config_pins()
+nrf_load()
 {
-	cd /sys/class/gpio
-	echo 50 > export
-	cd gpio50
-	echo out > direction
-	
-	config-pin P9_24 uart
-	config-pin P9_26 uart
-}
-
-fingerprint_load()
-{
-	module=fingerprintModule
-	device=fingerprintModule
+	module=nrf
+	device=nrf
 	mode="666"
 
 	cd `dirname $0`
@@ -35,10 +24,10 @@ fingerprint_load()
 	chmod $mode  /dev/${device}
 }
 
-fingerprint_unload()
+nrf_unload()
 {
-	module=fingerprintModule
-	device=fingerprintModule
+	module=nrfModule
+	device=nrfModule
 	cd `dirname $0`
 
 	# invoke rmmod with all arguments we got
@@ -50,13 +39,12 @@ fingerprint_unload()
 
 case "$1" in
 	start)
-		echo "Fingerprint sensor connected"
-		config_pins
-		fingerprint_load
+		echo "nrf connected"
+		nrf_load
 		;;
 	stop)
-		echo "Fingerprint sensor disconnected"
-		fingerprint_unload
+		echo "nrf disconnected"
+		nrf_unload
 		;;
 esac
 

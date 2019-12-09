@@ -1,13 +1,13 @@
 # kernel makefile
-ifeq($(CC),)
+ifeq ($(CC),)
 	CC = $(CROSS_COMPILE)gcc
 endif
 
-ifeq($(CCFLAGS),)
+ifeq ($(CCFLAGS),)
 	CCFLAGS= -g -Wall
 endif
 
-ifeq($(LDFLAGS),)
+ifeq ($(LDFLAGS),)
 	LDFLAGS= -pthread -lrt
 endif
 
