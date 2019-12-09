@@ -1,4 +1,4 @@
-#include <syslog.h>
+/*#include <syslog.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <wiringPi.h>
@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <wiringPiSPI.h>
+*/
 
 #include "buzzerModule.h"
 
