@@ -1,6 +1,11 @@
 // reference AD-013%20Command%20Operation%20Guide_v1.2.pdf
 // reference Fingerprint_sensor_module_User_Manual_v1.0_2019-1-22.pdf
 
+#define BUF_SIZE	100
+#define NUM_IMAGES	6
+
+pthread_mutex_t alarmLock;
+
 #include "fingerprintModule.h"
 
 int checksum(uint32_t cmd[], uint32_t length) 
