@@ -9,7 +9,7 @@ ifeq ($(CCFLAGS),)
 endif
 
 ifeq ($(LDFLAGS),)
-	LDFLAGS = -lwiringPi -;wiringPiDev -pthread -lm -lcrypt -lrt
+	LDFLAGS = -lwiringPi -wiringPiDev -lpthread -lm -lcrypt -lrt
 endif
 
 all: buzzerModule fingerprintModule
