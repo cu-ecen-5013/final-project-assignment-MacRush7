@@ -8,4 +8,8 @@
 #include <wiringPi.h>
 #include <pthread.h>
 
+#define buzzerPin	2
+
+pthread_mutex_t alarmLock;
+
 void buzzer(int passedFile);
