@@ -1,19 +1,9 @@
 // reference AD-013%20Command%20Operation%20Guide_v1.2.pdf
 // reference Fingerprint_sensor_module_User_Manual_v1.0_2019-1-22.pdf
-#include <linux/module.h>
-#include <linux/kernel.h>
-//#include <linux/init.h>
-#include <linux/printk.h>
-#include <linux/types.h>
-#include <linux/slab.h>
-#include <linux/cdev.h>
-#include <linux/fs.h> 		// file_operations
-#include <linux/uaccess.h>
-#include <linux/mutex.h>
 
 #include "fingerprintModule.h"
 
-int checksum(int cmd[], int length) 
+int checksum(uint32_t cmd[], uint32_t length) 
 {
 	int checksum = 0;
 	// check sum is last two bytes... reference 2

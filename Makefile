@@ -1,4 +1,5 @@
-# kernel makefile
+# normal simple makefile
+
 ifeq ($(CC),)
 	CC = $(CROSS_COMPILE)gcc
 endif
@@ -8,18 +9,18 @@ ifeq ($(CCFLAGS),)
 endif
 
 ifeq ($(LDFLAGS),)
-	LDFLAGS= -pthread -lrt
+	LDFLAGS = -lwiringPi -;wiringPiDev -pthread -lm -lcrypt -lrt
 endif
 
-all: fingerprintModule buzzerModule
-
-fingerprintModule: fingerprint-driver/fingerprintModule.c
-	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/fingerprintModule.c fingerprint-driver/fingerprintModule.h $(LDFLAGS)
+all: buzzerModule fingerprintModule
 
 buzzerModule: buzzer-driver/buzzerModule.c
 	$(CC) $(CCFLAGS) -o buzzerModule buzzer-driver/buzzerModule.c buzzer-driver/buzzerModule.h $(LDFLAGS)
 
+fingerprintModule: fingerprint-driver/fingerprintModule.c
+	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/fingerprintModule.c fingerprint-driver/fingerprintModule.h $(LDFLAGS)
+
 clean:
 	-rm -f *.o *.d
-	-rm -f fingerprintModule
 	-rm -f buzzerModule
+	-rm -f fingerprintModule
