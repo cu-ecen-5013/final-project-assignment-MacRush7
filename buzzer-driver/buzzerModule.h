@@ -8,6 +8,7 @@
 #include <wiringPi.h>
 #include <pthread.h>
 */
+#include <linux/mutex.h>
 
 #define buzzerPin		2
 

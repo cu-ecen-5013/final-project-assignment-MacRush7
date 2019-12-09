@@ -2,7 +2,7 @@
 // reference Fingerprint_sensor_module_User_Manual_v1.0_2019-1-22.pdf
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/init.h>
+//#include <linux/init.h>
 #include <linux/printk.h>
 #include <linux/types.h>
 #include <linux/slab.h>
