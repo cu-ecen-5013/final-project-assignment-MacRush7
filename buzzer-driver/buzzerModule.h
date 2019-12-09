@@ -10,6 +10,4 @@
 
 #define buzzerPin	2
 
-extern int alarmLock;
-
 void buzzer(int passedFile);

@@ -27,7 +27,7 @@ int minEnrolled, maxEnrolled, totalPrints;
 int main()
 {
 	// fingerprint buffer
-	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint, SPIfile, alarmLock = 0;
+	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint, SPIfile;
 	char userBuffer[3000], delName[30], testing[1], SPIdataBuffer[300];;
 	
 	minEnrolled = 0, totalPrints = 0;
@@ -338,20 +338,12 @@ int main()
 					alarm++;
 					
 					printf("fingerprint failed\n");
-						
-					if(alarm == 2)
-					{
-						if(alarmLock == 0)
-						{
-							alarmLock = 1;
-//							pthread_mutex_lock(&alarmLock);
-							lseek(alarmFile, 0, SEEK_SET);
-							write(alarmFile, "1", 1);
-//							pthread_mutex_unlock(&alarmLock);
-							alarmLock = 0;
-						}
-					}
-						
+
+//					pthread_mutex_lock(&alarmLock);
+					lseek(alarmFile, 0, SEEK_SET);
+					write(alarmFile, "1", 1);
+//					pthread_mutex_unlock(&alarmLock);
+			
 					state = 0;
 					break;
 				}

@@ -10,12 +10,9 @@
 #include <pthread.h>
 #include <string.h>
 #include <wiringPiSPI.h>
-#include "buzzerModule.h"
 
 #define BUF_SIZE	100
 #define NUM_IMAGES	6
-
-extern int alarmLock;
 
 struct fingerprintData
 {
