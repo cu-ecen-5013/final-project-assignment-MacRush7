@@ -9,9 +9,6 @@
 #include <linux/uaccess.h>
 #include <linux/mutex.h>
 
-#define buzzerPin		2
-pthread_mutex_t alarmLock;
-
 void buzzer(int passedFile)
 {
 	char *noAlarm = "0";
