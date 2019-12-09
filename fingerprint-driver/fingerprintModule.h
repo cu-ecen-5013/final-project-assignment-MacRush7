@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <wiringPiSPI.h>
+#include "bufferModule.h"
 
 #define BUF_SIZE	100
 #define NUM_IMAGES	6
