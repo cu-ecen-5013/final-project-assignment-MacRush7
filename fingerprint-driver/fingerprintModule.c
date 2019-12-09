@@ -13,7 +13,7 @@
 
 #include "fingerprintModule.h"
 
-int checksum(uint32_t cmd[], uint32_t length) 
+int checksum(int cmd[], int length) 
 {
 	int checksum = 0;
 	// check sum is last two bytes... reference 2
