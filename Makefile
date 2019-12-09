@@ -15,10 +15,10 @@ endif
 all: buzzerModule fingerprintModule
 
 buzzerModule: buzzer-driver/buzzerModule.c
-	$(CC) $(CCFLAGS) -o buzzerModule buzzer-driver/buzzerModule.c buzzer-driver/buzzerModule.h $(LDFLAGS)
+	$(CC) $(CCFLAGS) -o buzzerModule buzzer-driver/buzzerModule.c $(LDFLAGS)
 
 fingerprintModule: fingerprint-driver/fingerprintModule.c
-	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/fingerprintModule.c fingerprint-driver/fingerprintModule.h $(LDFLAGS)
+	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/fingerprintModule.c $(LDFLAGS)
 
 clean:
 	-rm -f *.o *.d
