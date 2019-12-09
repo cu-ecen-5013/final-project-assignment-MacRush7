@@ -31,10 +31,16 @@ int main()
 	char *fileStarter = "0";
 	int ret = 3, buzzerFile;
 
+	if(pthread_mutex_init(&alaramLock, NULL) != 0)
+	{
+		syslog(LOG_ERR, "mutex init failed");
+		return -1;
+	}
+
 	if(wiringPiSetup() == -1)
 	{
-			syslog(LOG_ERR, "wiringPi failed");
-			return -1;
+		syslog(LOG_ERR, "wiringPi failed");
+		return -1;
 	}
 	
 	pinMode(buzzerPin, OUTPUT);
