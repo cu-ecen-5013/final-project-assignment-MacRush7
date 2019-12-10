@@ -32,7 +32,7 @@ int main()
 	
 	minEnrolled = 0, totalPrints = 0;
 	
-	file = serialOpen ("/dev/ttyAMA0", 57600);
+	file = serialOpen ("/dev/ttyS0", 57600);
 	if(file == -1)
 	{
 		printf("failed to open serial port\n");
