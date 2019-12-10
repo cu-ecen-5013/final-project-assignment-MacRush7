@@ -25,7 +25,7 @@ void clearBuffer()
 int minEnrolled, maxEnrolled, totalPrints;
 
 int main()
-{
+{ 
 	// fingerprint buffer
 	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint;
 	char userBuffer[3000], delName[30], testing[1];
