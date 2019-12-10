@@ -25,11 +25,72 @@ void buzzer(int passedFile)
 		syslog(LOG_ERR, "file was not reset to 0");
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	char buffer[1];
 	char *fileStarter = "0";
 	int ret = 3, buzzerFile;
+
+	// daemon variables
+	pid_t processId = 0;
+	pid_t sid = 0;
+
+	// check for daemon
+	if(argc == 2)
+	{
+		// create child
+		if((processId = fork()) == -1)
+		{
+			syslog(LOG_ERR, "fork failed for daemon");
+			return -1;
+		}
+		
+		// kill parent
+		if(processId != 0)
+		{
+			exit(0);
+		}
+
+		// new session id
+		if((sid = setsid()) == -1)
+		{
+			syslog(LOG_ERR, "setsid failed for daemon");
+			return -1;
+		}
+			
+		// change directory to root
+		if((chdir("/")) == -1)
+		{
+			syslog(LOG_ERR, "chdir failed for daemon");
+			return -1;
+		}
+			
+		umask(0);
+			
+		// close files
+		close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO);
+
+		// redirect files to /dev/null
+		if((open("/dev/null", O_RDWR)) == -1)
+		{
+			syslog(LOG_ERR, "first open failed for daemon");
+			return -1;
+		}
+
+		if((open("/dev/null", O_RDWR)) == -1)
+		{
+			syslog(LOG_ERR, "second open failed for daemon");
+			return -1;
+		}
+
+		if((open("/dev/null", O_RDWR)) == -1)
+		{
+			syslog(LOG_ERR, "third open failed for daemon");
+			return -1;
+		}			
+	}
 
 	if(wiringPiSetup() == -1)
 	{
