@@ -6,15 +6,12 @@ set -e
 
 # dialog options
 HEIGHT=15
-WIDTH=50
+WIDTH=55
 CHOICE_HEIGHT=4
+OPTIONS=(1 "Fingerprint Sensor" 2 "RFID Sensor" 3 "GSM Module")
 
 # make dialog box
-CHOICE=${dialog --title "Welcome! How Would you Like to Verify your Access?" \
-	--menu "Please Select a Program:" \
-	$HEIGHT $WIDTH $CHOICE_HEIGHT \
-	1 "Fingerprint Sensor" 2 "RFID Sensor" 3 "GSM Module" \
-	2>&1 >/dev/tty}
+CHOICE=$(dialog --title "Welcome! How Would you Like to Verify your Access?" --menu "Please Select a Program:" $HEIGHT $WIDTH $CHOICE_HEIGHT "${OPTIONS[@]}" 2>&1 >/dev/tty)
 
 case $CHOICE in
 	1)
