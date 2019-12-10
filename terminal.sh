@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 # terminal face for the project
 # resource askubuntu.com/questions/1705/how-can-i-create-a-select-menu-in-a-shell-script
 
@@ -16,13 +16,11 @@ CHOICE=$(dialog --title "Welcome! How Would you Like to Verify your Access?" --m
 case $CHOICE in
 	1)
 		echo "Starting Fingerprint Module"
-		cd
-		cd ..
-		cd bin
 		./fingerprintModule
 		;;
 	2)
 		echo "Starting RFID Module"
+		./rfidtest.sh
 		;;
 	3)
 		echo "Starting GSM Module"
