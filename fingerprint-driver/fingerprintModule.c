@@ -31,8 +31,8 @@ int main()
 	char userBuffer[3000], delName[30], testing[1];
 	
 	minEnrolled = 0, totalPrints = 0;
-	
-	file = serialOpen ("/dev/ttyAMA0", 57600);
+
+	file = serialOpen ("/dev/ttyS0", 57600);
 	if(file == -1)
 	{
 		printf("failed to open serial port\n");
