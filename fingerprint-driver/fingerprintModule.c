@@ -34,11 +34,16 @@ int main()
 	
 	file = serialOpen ("/dev/ttyS0", 57600);
 	if(file == -1)
+	{
 		printf("failed to open serial port\n");
-	
+		syslog(LOG_ERR, "uart port failed to open");
+		return -1;
+	}
+
 	alarmFile = open("/bin/buzzerAlarm", O_WRONLY);
 	if(alarmFile == -1)
 	{
+		printf("buzzer file not opened\n");
 		syslog(LOG_ERR, "buzzer file was not found or opened");
 		return -1;
 	}
@@ -46,6 +51,7 @@ int main()
 	usersFile = open("/bin/fingerprintUsers", O_RDWR | O_CREAT | O_APPEND, 0777);
 	if(usersFile == -1)
 	{
+		printf("user file not opened\n");
 		syslog(LOG_ERR, "users file was not found or opened");
 		return -1;
 	}
