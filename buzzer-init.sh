@@ -6,11 +6,11 @@ set -e
 case "$1" in
 	start)
 		echo "Starting Buzzer Program"
-		./buzzerModule
+		start-stop=daemon -S -n simpleserver -a /usr/bin/buzzerModule -- -d
 		;;
 	stop)
 		echo "Stopping Buzzer Program"
-		trap "kill 0" EXIT
+		start-stop-daemon -K -n buzzermodule
 		;;
 	*)
 		echo "default start/stop"
