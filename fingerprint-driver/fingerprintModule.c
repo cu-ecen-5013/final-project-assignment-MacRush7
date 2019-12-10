@@ -458,7 +458,6 @@ int main()
 	serialClose(file);
 	close(alarmFile);
 	close(usersFile);
-	close(SPIfile);
 
 	return 0;
 }
