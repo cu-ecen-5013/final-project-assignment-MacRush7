@@ -28,7 +28,7 @@ void buzzer(int passedFile)
 int main()
 {
 	char buffer[1];
-	char *fileStarter = "1";
+	char *fileStarter = "0";
 	int ret = 3, buzzerFile;
 
 	if(wiringPiSetup() == -1)

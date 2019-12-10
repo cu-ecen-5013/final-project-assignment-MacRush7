@@ -27,8 +27,8 @@ int minEnrolled, maxEnrolled, totalPrints;
 int main()
 {
 	// fingerprint buffer
-	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint, SPIfile;
-	char userBuffer[3000], delName[30], testing[1], SPIdataBuffer[300];;
+	int state = 0, i = 0, ret = 0, image = 0, alarm = 0, file, alarmFile, usersFile, deleteThisPrint;
+	char userBuffer[3000], delName[30], testing[1];
 	
 	minEnrolled = 0, totalPrints = 0;
 	
@@ -55,14 +55,6 @@ int main()
 	{
 		printf("wiringPi.h failed!\n");
 		return 1; 
-	}
-
-	// channel 0 or 1, speed 500,000 through 32,000,000 Hz
-	SPIfile = wiringPiSPISetup(0, 1000000);
-	if(SPIfile == -1)
-	{
-		syslog(LOG_ERR, "cannot open spi");
-		return -1;
 	}
 	
 	while(1) // may want to change to stop the fingerprint module TODO
@@ -233,14 +225,6 @@ int main()
 					printf("Employee not added to database\n");
 				else				
 					printf("Employee added to database\n");
-				
-				// send data to other pi
-				lseek(usersFile, 0, SEEK_SET);
-				read(usersFile, SPIdataBuffer, strlen(SPIdataBuffer));
-				
-				ret = wiringPiSPIDataRW(0, SPIdataBuffer, strlen(SPIdataBuffer));
-				if(ret == -1)
-					syslog(LOG_ERR, "SPI send/receive failure");
 			
 				state = 0;
 				break;
