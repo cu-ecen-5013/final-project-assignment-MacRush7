@@ -16,7 +16,6 @@ CHOICE=${dialog --title "Welcome! How Would you Like to Verify your Access?" \
 	1 "Fingerprint Sensor" 2 "RFID Sensor" 3 "GSM Module" \
 	2>&1 >/dev/tty}
 
-clear
 case $CHOICE in
 	1)
 		echo "Starting Fingerprint Module"
