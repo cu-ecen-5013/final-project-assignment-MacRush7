@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	// check for daemon
 	if(argc == 2)
 	{
-		// create child
+		// create child 
 		if((processId = fork()) == -1)
 		{
 			syslog(LOG_ERR, "fork failed for daemon");
