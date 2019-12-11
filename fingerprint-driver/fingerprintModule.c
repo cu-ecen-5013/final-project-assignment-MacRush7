@@ -88,19 +88,10 @@ int main()
 				printf("place finger on scanner\n");
 				sleep(3);
 
-//				serialFlush(file);
-
-				write(file, &GetImage, GetImageLength);
-
-				lseek(file, 0, SEEK_SET);
-				read(file, fingerprintBuffer, GetImageLength);
-				for(i = 0; i<GetImageLength; i++)
-				{
-					printf("resp: %x\n", fingerprintBuffer[i]);
-				}
+				serialFlush(file);
 
 				// 10th position will be 0 if finger sensed
-/*				for(i = 0; i < GetImageLength; i++)
+				for(i = 0; i < GetImageLength; i++)
 					serialPutchar(file, GetImage[i]);
 
 				// write cmd to buffer for checking
@@ -114,7 +105,7 @@ int main()
 					printf("getimg resp: %x\n", fingerprintBuffer[i]);
 				}
 				
-*/				if(fingerprintBuffer[9] != 0)
+				if(fingerprintBuffer[9] != 0)
 				{
 					printf("no finger sensed\n");
 					state = 0;

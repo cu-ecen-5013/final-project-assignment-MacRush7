@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <syslog.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 int main ()
 {
@@ -14,8 +19,8 @@ int main ()
 	}
 
 	// initialize file
-	lseek(buzzerFile, 0, SEEK_SET);
-	write(buzzerFile, 1, 1);
+	lseek(alarmFile, 0, SEEK_SET);
+	write(alarmFile, 1, 1);
 
 	close(alarmFile);
 }
