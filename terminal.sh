@@ -8,7 +8,7 @@ set -e
 HEIGHT=15
 WIDTH=55
 CHOICE_HEIGHT=4
-OPTIONS=(1 "Fingerprint Sensor" 2 "RFID Sensor" 3 "GSM Module")
+OPTIONS=(1 "System Init" 2 "Fingerprint Sensor" 3 "RFID Sensor" 4 "Buzzer Sensor")
 
 # make dialog box
 CHOICE=$(dialog --title "Welcome! How Would you Like to Verify your Access?" --menu "Please Select a Program:" $HEIGHT $WIDTH $CHOICE_HEIGHT "${OPTIONS[@]}" 2>&1 >/dev/tty)
@@ -16,14 +16,19 @@ CHOICE=$(dialog --title "Welcome! How Would you Like to Verify your Access?" --m
 case $CHOICE in
 	1)
 		echo "Starting Fingerprint Module"
-		./fingerprintModule
+		./init.sh
 		;;
 	2)
 		echo "Starting RFID Module"
-		./rfidtest.sh
+		./fingerprintModule		
 		;;
 	3)
 		echo "Starting GSM Module"
+		./rfidtest.sh
+		;;
+	4)
+		echo "Starting Buzzer Module"
+		./buzzerTest
 		;;
 
 esac

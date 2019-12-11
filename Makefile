@@ -12,7 +12,7 @@ ifeq ($(LDFLAGS),)
 	LDFLAGS = -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
 endif
 
-all: buzzerModule fingerprintModule
+all: buzzerModule fingerprintModule buzzerTest
 
 buzzerModule: buzzer-driver/buzzerModule.c
 	$(CC) $(CCFLAGS) -o buzzerModule buzzer-driver/buzzerModule.c $(LDFLAGS)
@@ -20,7 +20,11 @@ buzzerModule: buzzer-driver/buzzerModule.c
 fingerprintModule: fingerprint-driver/fingerprintModule.c
 	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/fingerprintModule.c $(LDFLAGS)
 
+buzzerTest: buzzer-driver/buzzerTest.c
+	$(CC) $(CCFLAGS) -o buzzerTest buzzer-driver/buzzerTest.c $(LDFLAGS)
+
 clean:
 	-rm -f *.o *.d
 	-rm -f buzzerModule
 	-rm -f fingerprintModule
+	-rm -f buzzerTest
