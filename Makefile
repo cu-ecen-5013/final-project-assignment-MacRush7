@@ -17,8 +17,8 @@ all: buzzerModule fingerprintModule
 buzzerModule: buzzer-driver/buzzerModule.c
 	$(CC) $(CCFLAGS) -o buzzerModule buzzer-driver/buzzerModule.c $(LDFLAGS)
 
-fingerprintModule: fingerprint-driver/fingerprintModule.c
-	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/fingerprintModule.c $(LDFLAGS)
+fingerprintModule: fingerprint-driver/main.c
+	$(CC) $(CCFLAGS) -o fingerprintModule fingerprint-driver/main.c $(LDFLAGS)
 
 clean:
 	-rm -f *.o *.d
