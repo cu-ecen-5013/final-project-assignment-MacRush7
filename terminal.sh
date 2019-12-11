@@ -5,9 +5,9 @@
 set -e
 
 # dialog options
-HEIGHT=30
+HEIGHT=15
 WIDTH=55
-CHOICE_HEIGHT=4
+CHOICE_HEIGHT=6
 OPTIONS=(1 "System Init" 2 "Fingerprint Sensor" 3 "RFID Sensor" 4 "Buzzer Test" 5 "MySQL")
 
 # make dialog box
