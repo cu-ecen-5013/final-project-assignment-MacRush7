@@ -1,4 +1,6 @@
-#!/bin/bashecho "Initializing system...\n"
+#!/bin/bash
+
+echo "Initializing system...\n"
 
 modprobe i2c-dev
 modprobe i2c-bcm2835

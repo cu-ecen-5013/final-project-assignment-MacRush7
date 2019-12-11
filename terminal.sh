@@ -5,7 +5,7 @@
 set -e
 
 # dialog options
-HEIGHT=15
+HEIGHT=30
 WIDTH=55
 CHOICE_HEIGHT=4
 OPTIONS=(1 "System Init" 2 "Fingerprint Sensor" 3 "RFID Sensor" 4 "Buzzer Test" 5 "MySQL")
@@ -15,15 +15,15 @@ CHOICE=$(dialog --title "Welcome! How Would you Like to Verify your Access?" --m
 
 case $CHOICE in
 	1)
-		echo "Starting Fingerprint Module"
+		echo "Starting System Init"
 		./init.sh
 		;;
 	2)
-		echo "Starting RFID Module"
+		echo "Starting Fingerprint Module"
 		./fingerprintModule		
 		;;
 	3)
-		echo "Starting GSM Module"
+		echo "Starting RFID Module"
 		./rfidtest.sh
 		;;
 	4)
