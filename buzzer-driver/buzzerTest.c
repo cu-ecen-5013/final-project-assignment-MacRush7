@@ -9,6 +9,7 @@
 int main ()
 {
 	int alarmFile;
+	char *test = "1";
 
 	alarmFile = open("/bin/buzzerAlarm", O_WRONLY);
 	if(alarmFile == -1)
@@ -18,9 +19,13 @@ int main ()
 		return -1;
 	}
 
-	// initialize file
+	// send 1 to file
 	lseek(alarmFile, 0, SEEK_SET);
-	write(alarmFile, 1, 1);
+	int ret = write(alarmFile, test, 1);
+	if(ret == -1 || ret == 0)
+		printf("write failed\n");
+	else
+		printf("wrote 1 to file\n");
 
 	close(alarmFile);
 }
